@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang = "en-US">
     <head>
-        <meta name = "viewport" content = "height-device-height, initial-scale=1.0" charset="utf-8" />
+        <meta charset="utf-8" />
         <title>wine locator</title>
         <link rel = "stylesheet" href = "style.css">
-        <script src ="script.js"></script>
+        <script type = "text/javascript" src = "scripts/skusearch.js"></script>
+        <script type = "text/javascript" src = "scripts/namesearch.js"></script>
     </head>
 <body>
     <h1> 
@@ -14,9 +15,8 @@
         Enter a SKU or product name:
     </h2>
     <form>
-        SKU: <br> <input type = "text" name = "SKU"> <br>
-        Product Name: <br> <input type = "text" name = "product name"> <br> <br> 
-        <input type = "submit" value = "Search">  
+        SKU: <br> <input type = "text" name = "SKU"> <input type = "button" onclick = test1() value = Search> <br> <br>
+        Product Name: <br> <input type = "text" name = "product name"> <input type = "button" onclick = test2() value = "Search">  <br> <br>  
     </form>
     <h3>
         Or,
