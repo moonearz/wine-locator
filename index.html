@@ -4,8 +4,7 @@
         <meta charset="utf-8" />
         <title>wine locator</title>
         <link rel = "stylesheet" href = "style.css">
-        <script type = "text/javascript" src = "scripts/skusearch.js"></script>
-        <script type = "text/javascript" src = "scripts/namesearch.js"></script>
+        <script type = "text/javascript" src = "scripts/main.js"></script>
     </head>
 <body>
     <h1> 
@@ -15,8 +14,8 @@
         Enter a SKU or product name:
     </h2>
     <form>
-        SKU: <br> <input type = "text" id = "sku" name = "SKU"> <input type = "button" onclick = test1(sku.value) value = Search> <br> <br>
-        Product Name: <br> <input type = "text" id = "pname" name = "product name"> <input type = "button" onclick = test2(pname.value) value = "Search">  <br> <br>  
+        SKU: <br> <input type = "text" id = "sku" name = "SKU"> <input type = "button" onclick = skusearch(sku.value) value = Search> <br> <br>
+        Product Name: <br> <input type = "text" id = "pname" name = "product name"> <input type = "button" onclick = namesearch(pname.value) value = "Search">  <br> <br>  
     </form>
     <h3>
         Or,
