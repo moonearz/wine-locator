@@ -4,4 +4,26 @@ h1 {
 
 .button {
     border-radius: 8px;
+    background-color: lightblue;
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto;
+    grid-template-rows: auto auto auto auto auto auto;
+}
+
+.shelf-title {
+    padding: 10px;
+    text-align: center;
+}
+.shelf {
+    padding: 5px;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.shelf:hover {
+    background-color: green;
+}
+
