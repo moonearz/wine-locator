@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 document.addEventListener('DOMContentLoaded', ()=> {
     //search button click cues
     var skuInput = document.getElementById("sku");
