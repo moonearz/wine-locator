@@ -18,15 +18,22 @@ h1 {
     text-align: center;
 }
 .shelf {
-    padding: 40px;
+    padding-top: 30px;
     border: 1px solid black;
     text-align: center;
+    align-self: center;
+    height: 60px;
 }
 
 .shelf:hover {
     background-color: green;
 }
 
+.item {
+    display: inline-block;
+    margin-right: 2px;
+    font-size: 15px;
+}
 .marked {
     background-color: red;
 }

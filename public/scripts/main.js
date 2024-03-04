@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     )
     document.getElementById('nameButton').addEventListener('click', 
         function () {
-            skusearch(nameInput.value, skuMap);
+            namesearch(nameInput.value, skuMap);
         }
     )
 
@@ -42,11 +42,10 @@ function CSVtoHash(text, map) {
  function skusearch(input, map) {
     if(map.has(input)) {
         if(map.get(input)[1] === "wine") {
-            writeTest('test.csv', "this is a test");
-            window.open("wines.html")
+            window.open("wines")
         }
         else if(map.get(input)[1] === "beer") {
-            window.open("beers.html")
+            window.open("beers")
         }
         else {
             alert("aisle not found!")
@@ -62,16 +61,10 @@ function namesearch(input, map) {
 }
 
 //marking/unmarking functions
-function writeTest(url, message) {
-    writeFile(url, message, (err) => {
-        if(err) throw err;
-    })
-}
-
 function mark(url, sku) {
-
+    
 }
 
-function unmark(url) {
+function unmark(url, sku) {
 
 }
