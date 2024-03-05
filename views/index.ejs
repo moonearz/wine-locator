@@ -15,14 +15,14 @@
     <h2>
         Enter a SKU or product name:
     </h2>
-    <form>
-        SKU: <br> <input type = "text" id = "sku" name = "SKU"> <input type = "button" id = "skuButton" value = Search> <br> <br>
-        Product Name: <br> <input type = "text" id = "pname" name = "product name"> <input type = "button" id = "nameButton" value = "Search">  <br> <br>  
+    <form action ='/home' method = "POST">
+        SKU: <br> <input type = "text" id = "sku" name = "SKU"> <input type = "submit" id = "skuButton" value = "Search"> <br> <br>
     </form>
+    <form action ='/home' method = "POST">Product Name: <br> <input type = "text" id = "pname" name = "product name"> <input type = "submit" id = "nameButton" value = "Search"><br> <br> </form>
     <h3>
         Or,
     </h3>
-    <a href = "wines.html">
+    <a href = "wines">
         <button class = "button">
             Browse/Manage the shelves
         </button>

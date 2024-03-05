@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', ()=> {
-    fetch('../text/current_wine.csv')
+    fetch('../data/current_wine.csv')
         .then((res) => res.text())
         .then((text) => {
             readShelves(text);
@@ -19,13 +19,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
         
     }
 
-    function mark(element) {
-        element.classList.add('marked');
-    }
-
     function isNumeric(input) {
         return (input - 0) == input && (''+input).trim().length > 0;
     }
+
     function readShelves(text) {
         var lines = text.split("\n");
         while(typeof lines[0] !== 'undefined') {
@@ -33,7 +30,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
             var split = line.split(',');
             if(isNumeric(split[4])) {
                 var index = parseInt(split[4]) + 5 * parseInt(split[5]);
-                if(split[7] == 1) {
+                if(split[7] === '1') {
                     shelves[index].innerHTML += '<div class = "marked item">' + split[0] + '</div>';
                 }
                 else {
