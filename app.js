@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+const csv = require('jquery-csv');
 
 const app = express();
 
@@ -31,18 +32,8 @@ app.use(express.urlencoded({extended: true}));
 
 app.post('/home', (req, res) => {
     var searchValue = req.body.SKU;
-    var outText = "";
-    lines = wineText.split(/[\r\n]+/);
-    while(typeof lines[0] !== 'undefined') {
-        if(lines[0].slice(0,5) === searchValue) {
-            lines[0] = lines[0].slice(0, -1) + '1';
-        }
-        outText += lines.shift() + "\n";
-    }
-    fs.writeFile('public/data/current_wine.csv', outText, (err) => {
-        if(err) console.error(err);
-    });
     if(skuMap.has(searchValue)) {
+        mark('public/data/current_wine.csv', wineText, searchValue);
         res.render('wines', {title: 'Wines'});
     }
     else {
@@ -71,9 +62,14 @@ app.get('/beers', (req, res) => {
     res.render('beers', {title: 'Beers'});
 });
 
+app.get('/shelf', (req, res) => {
+    res.render('shelf', {title: 'Shelf'});
+});
+
 app.use((req, res) => {
     res.status(404).render('404', {title: '404'});
 });
+
 
 
 
@@ -94,4 +90,34 @@ function skusearch(input, wineText, map) {
     else {
         alert("input not found!");
     }
+}
+
+function mark(document, text, sku) {
+    var outText = "";
+    lines = text.split(/[\r\n]+/);
+    while(typeof lines[0] !== 'undefined') {
+        if(lines[0].slice(0,5) === sku) {
+            lines[0] = lines[0].slice(0, -1) + '1';
+        }
+        outText += lines.shift() + "\n";
+    }
+    outText += lines.shift() + "\n";
+    outText = outText.trim();
+    fs.writeFile(document, outText, (err) => {
+        if(err) console.error(err);
+    });
+}
+
+function unmark(document, text) {
+    var outText = "";
+    lines = text.split(/[\r\n]+/);
+    while(typeof lines[0] !== 'undefined') {
+        lines[0] = lines[0].slice(0, -1) + '0';
+        outText += lines.shift() + "\n";
+    }
+    outText += lines.shift() + "\n";
+    outText = outText.trim();
+    fs.writeFile(document, outText, (err) => {
+        if(err) console.error(err);
+    });
 }

@@ -2,14 +2,23 @@ h1 {
     text-align: center;
 }
 
-.button {
+h1, h3, h4 {
+    font-size: 30px;
+}
+
+.button1 {
     border-radius: 8px;
     background-color: lightblue;
 }
 
+.button2 {
+    border-radius: 8px;
+    background-color: lightcoral;
+}
+
 .grid-container {
     display: grid;
-    grid-template-columns: auto auto auto auto auto auto auto;
+    grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto;
     grid-template-rows: auto auto auto auto auto auto;
 }
 
