@@ -6,22 +6,23 @@ const app = express();
 //database
 var productMap = new Map;
 var nameMap = new Map;
+var nameArr = [];
 fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
     var lines = data.split(",,\r\n");
+    lines.shift();
     while(typeof lines[0] !== 'undefined') {
         var line = lines.shift();
         var split = line.split(',');
+        nameArr.push(split[1]);
         nameMap.set(split[1], split[0]);
         productMap.set(split[0], split.splice(1));
     }
     
     for(var [key, value] of nameMap) {
-        console.log(key + " -> " + value);
+        //console.log(key + " -> " + value);
     }
-    
-   console.log(nameMap.size);
+   //console.log(nameMap.size);
 });
-
 
 
 
@@ -53,15 +54,39 @@ app.use(express.urlencoded({extended: true}));
 
 app.post('/home', (req, res) => {
     var searchValue = req.body.SKU;
-    if(skuMap.has(searchValue)) {
-        unmarkAll('public/data/current_wine.csv', wineText);
-        mark('public/data/current_wine.csv', wineText, searchValue);
-        res.render('wines', {title: 'Wines'});
+    var nameValue = req.body.pname.toUpperCase();
+    console.log(nameValue);
+    console.log(searchValue);
+    console.log(searchValue === undefined);
+    if(searchValue !== undefined) {
+        if(skuMap.has(searchValue)) {
+            unmarkAll('public/data/current_wine.csv', wineText);
+            mark('public/data/current_wine.csv', wineText, searchValue);
+            res.render('wines', {title: 'Wines'});
+        }
+        else {
+            //should inform the user that item was not found
+            res.render('index', {title: 'Home'});
+        }
     }
     else {
-        //should inform the user that item was not found
+        if(nameValue !== undefined) {
+            var candidates = [];
+            for(index in nameArr) {
+                if(nameArr[index].includes(nameValue)) {
+                    candidates.push(nameArr[index]);
+                }
+            }
+            console.log(candidates);
+        }
         res.render('index', {title: 'Home'});
     }
+});
+
+app.post('/shelf', (req, res) => {
+    console.log(req.body)
+    var shelfNum = req.body.num;
+    res.render('shelf', {title: 'Shelf' + shelfNum});
 });
 
 app.get('/', (req, res) => {
