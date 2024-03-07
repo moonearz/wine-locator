@@ -32,7 +32,7 @@ h1, h3, h4 {
     text-align: center;
     align-self: center;
     height: 100px;
-    width: 120px;
+    width: 138px;
 }
 .form {
     width: 100%;
@@ -42,8 +42,33 @@ h1, h3, h4 {
 .bigshelf {
     display: flex;
     border: 2px solid black;
-    height: 380px;
-    background-image: url('bottle.jpg');
+    height: 600px;
+}
+
+.bottle {
+    height: 360px;
+    width: 306px;
+    background-image: url('images/bottle.jpg');
+    padding-bottom: 40px;
+}
+
+.name {
+    text-align: center;
+    height: 224px;
+    background-image: url('images/sign.png')
+}
+
+.price {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    border: 20px black;
+    background-color: white;
+    text-align: center;
+}
+.product {
+    display: flex;
+    flex-direction: column;
 }
 
 .shelf:hover {

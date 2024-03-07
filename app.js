@@ -54,7 +54,13 @@ app.use(express.urlencoded({extended: true}));
 
 app.post('/home', (req, res) => {
     var searchValue = req.body.SKU;
-    var nameValue = req.body.pname.toUpperCase();
+    var nameValue;
+    if(req.body.pname === undefined) {
+        nameValue = req.body.pname;
+    }
+    else {
+        nameValue = req.body.pname.toUpperCase();
+    }
     console.log(nameValue);
     console.log(searchValue);
     console.log(searchValue === undefined);
@@ -86,7 +92,7 @@ app.post('/home', (req, res) => {
 app.post('/shelf', (req, res) => {
     console.log(req.body)
     var shelfNum = req.body.num;
-    res.render('shelf', {title: 'Shelf' + shelfNum});
+    res.render('shelf', {title: 'Shelf ' + shelfNum});
 });
 
 app.get('/', (req, res) => {
@@ -166,4 +172,12 @@ function unmarkAll(document, text) {
     fs.writeFile(document, outText, (err) => {
         if(err) console.error(err);
     });
+}
+
+class product {
+    constructor(sku, name) {
+        this.sku = sku;
+        this.name = name;
+        this.marked = 0;
+    }
 }
