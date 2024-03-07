@@ -8,16 +8,18 @@ var productMap = new Map;
 var nameMap = new Map;
 fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
     var lines = data.split(",,\r\n");
-    lines.shift();
     while(typeof lines[0] !== 'undefined') {
         var line = lines.shift();
         var split = line.split(',');
         nameMap.set(split[1], split[0]);
         productMap.set(split[0], split.splice(1));
     }
+    
     for(var [key, value] of nameMap) {
         console.log(key + " -> " + value);
     }
+    
+   console.log(nameMap.size);
 });
 
 
@@ -52,6 +54,7 @@ app.use(express.urlencoded({extended: true}));
 app.post('/home', (req, res) => {
     var searchValue = req.body.SKU;
     if(skuMap.has(searchValue)) {
+        unmarkAll('public/data/current_wine.csv', wineText);
         mark('public/data/current_wine.csv', wineText, searchValue);
         res.render('wines', {title: 'Wines'});
     }
@@ -74,6 +77,7 @@ app.get('/index', (req, res) => {
 });
 
 app.get('/wines', (req, res) => {
+    //unmarkAll('public/data/current_wine.csv', wineText);
     res.render('wines', {title: 'Wines'});
 });
 
@@ -120,22 +124,20 @@ function mark(document, text, sku) {
         }
         outText += lines.shift() + "\n";
     }
-    outText += lines.shift() + "\n";
-    outText = outText.trim();
     fs.writeFile(document, outText, (err) => {
         if(err) console.error(err);
     });
 }
 
-function unmark(document, text) {
+function unmarkAll(document, text) {
     var outText = "";
-    lines = text.split(/[\r\n]+/);
+    var lines = text.split(/[\r\n]+/);
+    outText += lines.shift() + "\n";
     while(typeof lines[0] !== 'undefined') {
         lines[0] = lines[0].slice(0, -1) + '0';
-        outText += lines.shift() + "\n";
+        var line = lines.shift() + "\n";
+        outText += line;
     }
-    outText += lines.shift() + "\n";
-    outText = outText.trim();
     fs.writeFile(document, outText, (err) => {
         if(err) console.error(err);
     });
