@@ -1,8 +1,27 @@
 const express = require('express');
 const fs = require('fs');
-const csv = require('jquery-csv');
 
 const app = express();
+
+//database
+var productMap = new Map;
+var nameMap = new Map;
+fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
+    var lines = data.split(",,\r\n");
+    lines.shift();
+    while(typeof lines[0] !== 'undefined') {
+        var line = lines.shift();
+        var split = line.split(',');
+        nameMap.set(split[1], split[0]);
+        productMap.set(split[0], split.splice(1));
+    }
+    for(var [key, value] of nameMap) {
+        console.log(key + " -> " + value);
+    }
+});
+
+
+
 
 //map
 var skuMap = new Map();
