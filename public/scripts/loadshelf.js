@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     fetch('../data/wine_shelves.csv')
         .then((res) => res.text())
         .then((text) => {
-            var blocks = text.split('\n');
+            var blocks = text.split(/[\r\n]+/);
             for(var i = 0; i < index; i++) {
                 blocks.shift();
             }
@@ -34,6 +34,7 @@ function makeShelf(block, shelfArr) {
         return;
     }
     var blocks = block.split(',');
+    blocks.shift();
     while(typeof(blocks[0]) !== 'undefined') {
         var sku = blocks.shift();
         var name = blocks.shift();
@@ -63,6 +64,7 @@ function TitleCase(string) {
 }
 
 function shelfHTML(shelfArr, aisle) {
+    console.log(shelfArr);
     newText = ""
     for(index in shelfArr) {
         if(shelfArr[index].marked) {
@@ -88,6 +90,13 @@ function shelfHTML(shelfArr, aisle) {
     if(newText === "") {
         newText = '<h2> This shelf is empty </h2>';
     }
+    newText += '<form action="/beer" class = "addbutton">' + "Add an item to this shelf <br><br><br>";
+    newText += '<label for = "sku"> SKU or Product Name: </label><br>';
+    newText += '<input type = "text" id = "sku" name = "sku" required><br>';
+    newText += '<label for = "index"> Index (nth from the left): </label><br>';
+    newText += '<input type = "text" id = "index" name = "index" required><br><br><br>';
+    newText += '<input type = "submit">';
+    newText += '</form>';
     return newText;
 }
 

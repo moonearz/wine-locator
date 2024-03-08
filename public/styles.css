@@ -9,12 +9,18 @@ h1, h3, h4 {
 
 .button1 {
     border-radius: 8px;
-    background-color: lightblue;
+    background-color: lightcoral;
 }
 
 .button2 {
     border-radius: 8px;
-    background-color: lightcoral;
+    background-color: lightblue;
+}
+
+.addbutton {
+    margin-left: 20px;
+    margin-top: 150px;
+    margin-right: 20px;
 }
 
 /* GRID STYLES */
@@ -54,7 +60,7 @@ h1, h3, h4 {
 .item {
     display: inline-block;
     margin-right: 2px;
-    font-size: 15px;
+    font-size: 10px;
 }
 
 .marked {

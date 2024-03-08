@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 continue;
             }
             var split = line.split(',');
+            split.shift();
             while(isNumeric(split[0])) {
                 if(split[3] === '1') {
                     shelves[i].innerHTML += '<div class = "marked item">' + split[0] + '</div>';

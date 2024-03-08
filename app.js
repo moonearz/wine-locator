@@ -31,7 +31,6 @@ var wineText;
 fs.readFile('public/data/wine_shelves.csv', 'utf-8', (err, data) => {
     if(err) console.log(err);
     wineShelves = readWine(data);
-    console.log(wineShelves);
     var writeText = writeWine(wineShelves);
     fs.writeFile('public/data/test2.csv', writeText, (err) => {
         if(err) {
@@ -113,6 +112,10 @@ app.get('/shelf', (req, res) => {
     res.render('shelf', {title: 'Shelf'});
 });
 
+app.get('/help', (req, res) => {
+    res.render('help', {title: 'Help'});
+});
+
 app.use((req, res) => {
     res.status(404).render('404', {title: '404'});
 });
@@ -170,6 +173,10 @@ function unmarkAll(document, text) {
 function writeWine(wineShelves) {
     var text = "";
     for(index1 in wineShelves) {
+        text += index1;
+        if(wineShelves[index1].length > 0) {
+            text += ',';
+        }
         for(index2 in wineShelves[index1]) {
             text += wineShelves[index1][index2].sku + ',';
             text += wineShelves[index1][index2].name + ',';
