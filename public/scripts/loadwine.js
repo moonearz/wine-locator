@@ -7,17 +7,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
         .catch((e) => console.error(e));
     //shelves are clickable
     var shelves = document.getElementsByClassName('shelf');
-    for(var i = 0; i < shelves.length; i++) {
-        shelves[i].addEventListener('click', 
-            function() {
-                zoom(this);
-            }
-        );
-    }
-
-    function zoom(element) {
-        
-    }
 
     function isNumeric(input) {
         return (input - 0) == input && (''+input).trim().length > 0;

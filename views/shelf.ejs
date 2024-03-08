@@ -4,19 +4,27 @@
         <meta charset="utf-8" />
         <title>Wine Locator | <%= title %></title>
         <link rel = "stylesheet" href = "styles.css">
+        <script src = "scripts/loadshelf.js"></script>
     </head>
     <h1> 
         Shelf View
     </h1>
-    <div class = "bigshelf">
+    <div class = "bigshelf" id = "bigshelf">
         <div class = "product">
-            <div class = "bottle">
-                blah
-            </div>
-            <div class = "name">
-                Very Fancy Wine
+            <div class = "bottle"></div>
+            <div class = "tag">
+                <p class = "name"> Very Fancy Wine </p>
                 <div class = "price">
-                    $89.99
+                    <p> $89.99 </p>
+                </div>
+            </div>
+        </div>
+        <div class = "product">
+            <div class = "bottle"></div>
+            <div class = "tag">
+                <p class = "name"> Neighbor Wine </p>
+                <div class = "price">
+                    <p> $19.99 </p>
                 </div>
             </div>
         </div>
