@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', ()=> {
-    fetch('../data/current_wine.csv')
+    fetch('../data/wine_shelves.csv')
         .then((res) => res.text())
         .then((text) => {
-            readShelves(text);
+            readWineShelves(text);
         })
         .catch((e) => console.error(e));
     //shelves are clickable
@@ -12,22 +12,24 @@ document.addEventListener('DOMContentLoaded', ()=> {
         return (input - 0) == input && (''+input).trim().length > 0;
     }
 
-    function readShelves(text) {
+    function readWineShelves(text) {
         var lines = text.split("\n");
-        while(typeof lines[0] !== 'undefined') {
+        for(var i = 0; i < 55; i++) {
             var line = lines.shift();
+            if(typeof(line) === 'undefined') {
+                continue;
+            }
             var split = line.split(',');
-            if(isNumeric(split[4])) {
-                var index = parseInt(split[4]) + 5 * parseInt(split[5]);
-                if(split[7] === '1') {
-                    shelves[index].innerHTML += '<div class = "marked item">' + split[0] + '</div>';
+            while(isNumeric(split[0])) {
+                if(split[3] === '1') {
+                    shelves[i].innerHTML += '<div class = "marked item">' + split[0] + '</div>';
                 }
                 else {
-                    shelves[index].innerHTML += '<div class = "item">' + split[0] + '</div>';
+                    shelves[i].innerHTML += '<div class = "item">' + split[0] + '</div>';
                 }
-            }
-            else {
-                var index = -1;
+                for(var j = 0; j < 4; j++) {
+                    split.shift();
+                }
             }
         }
     }

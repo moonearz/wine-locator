@@ -27,23 +27,20 @@ fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
 //current shelves
 var wineShelves = [];
 var beerShelves = [];
-var skuMap = new Map();
 var wineText;
-fs.readFile('public/data/current_wine.csv', 'utf-8', (err, data) => {
-    wineText = data;
-    var lines = data.split("\n");
-    lines.shift();
-    while(typeof lines[0] !== 'undefined') {
-        var line = lines.shift();
-        var split = line.split(',');
-        skuMap.set(split[0], split.splice(1));
-    }
-    /*
-    for(var [key, value] of skuMap) {
-        console.log(key + " -> " + value[0]);
-    }
-    */
+fs.readFile('public/data/wine_shelves.csv', 'utf-8', (err, data) => {
+    if(err) console.log(err);
+    wineShelves = readWine(data);
+    console.log(wineShelves);
+    var writeText = writeWine(wineShelves);
+    fs.writeFile('public/data/test2.csv', writeText, (err) => {
+        if(err) {
+            console.log(err);
+        }
+    });     
 });
+
+
 
 app.set('view engine', 'ejs');
 
@@ -55,16 +52,13 @@ app.use(express.urlencoded({extended: true}));
 app.post('/home', (req, res) => {
     var searchValue = req.body.SKU;
     var nameValue;
-    if(req.body.pname === undefined) {
+    if(typeof(req.body.pname) === 'undefined') {
         nameValue = req.body.pname;
     }
     else {
         nameValue = req.body.pname.toUpperCase();
     }
-    //console.log(nameValue);
-    //console.log(searchValue);
-    //console.log(searchValue === undefined);
-    if(searchValue !== undefined) {
+    if(typeof(searchValue) !== 'undefined') {
         if(skuMap.has(searchValue)) {
             unmarkAll('public/data/current_wine.csv', wineText);
             mark('public/data/current_wine.csv', wineText, searchValue);
@@ -76,7 +70,7 @@ app.post('/home', (req, res) => {
         }
     }
     else {
-        if(nameValue !== undefined) {
+        if(typeof (nameValue) !== 'undefined') {
             var candidates = [];
             for(index in nameArr) {
                 if(nameArr[index].includes(nameValue)) {
@@ -180,34 +174,49 @@ function writeWine(wineShelves) {
             text += wineShelves[index1][index2].sku + ',';
             text += wineShelves[index1][index2].name + ',';
             text += wineShelves[index1][index2].price + ',';
-            text += wineShelves[index1][index2].marked;
+            if(wineShelves[index1][index2].marked) {
+                text += '1';
+            }
+            else {
+                text += '0';
+            }
             if(index2 + 1 !== wineShelves[index1].length) {
                 text += ',';
             }
         }
-        text += '\n';
+        if(index1 + 1 < wineShelves.length) {
+            text += '\n';
+        }
     }
+    return text;
 }
 
-function readWine(wineText, wineShelves) {
-    wineShelves = [];
-    var shelves = wineText.split(/[\r\n]+/);
-    while(shelves[0] !== undefined) {
-        nextShelf = [];
+function readWine(wineText) {
+    var output = [];
+    var shelves = wineText.split('\n');
+    for(var i = 0; i < 55; i++) {
+        if(typeof shelves[0] === 'undefined') {
+            output.push([]);
+            continue;
+        }
+        var nextShelf = [];
         nextLine = shelves[0].split(',');
-        while(nextLine[0] !== undefined) {
+        while(typeof(nextLine[0]) !== 'undefined') {
             var sku = nextLine.shift();
             var name = nextLine.shift();
             var price = nextLine.shift();
             var marked = nextLine.shift();
-            if(sku === undefined || name === undefined || price === undefined || marked === undefined) {
+            //console.log(sku + ' ' + name + ' ' + price + ' ' + marked + "\n");
+            if(typeof(sku) === 'undefined' || typeof(name) === 'undefined' || typeof(price) === 'undefined' || typeof(marked) === 'undefined') {
                 break;
             }
             nextItem = new product(sku, name, price, marked);
             nextShelf.push(nextItem);
         }
-        wineShelves.push(nextShelf);
+        output.push(nextShelf);
+        shelves.shift();
     }
+    return output;
 }
 
 class product {

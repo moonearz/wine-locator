@@ -1,24 +1,45 @@
 document.addEventListener('DOMContentLoaded', ()=> {
     var shelfArr = [];
+    var index = getIndex();
     bigShelf = document.getElementById("bigshelf");
     bigShelf.innerHTML = "";
-    fetch('../data/test.csv')
+    fetch('../data/wine_shelves.csv')
         .then((res) => res.text())
         .then((text) => {
-            blocks = text.split(',');
-            makeShelf(blocks, shelfArr);
-            bigShelf.innerHTML = shelfHTML(shelfArr, "beer");
+            var blocks = text.split('\n');
+            for(var i = 0; i < index; i++) {
+                blocks.shift();
+            }
+            makeShelf(blocks[0], shelfArr);
+            bigShelf.innerHTML = shelfHTML(shelfArr, "wine");
         })
         .catch((e) => console.error(e));
 });
 
-function makeShelf(blocks, shelfArr) {
-    while(blocks[0] !== undefined) {
+function getIndex() {
+    var title = document.title;
+    var index = title.length - 1;
+    while(isNumeric(title[index])) {
+        index--;
+    }
+    return title.slice(index + 1);
+}
+
+function isNumeric(input) {
+    return (input - 0) == input && (''+input).trim().length > 0;
+}
+
+function makeShelf(block, shelfArr) {
+    if(typeof(block) === 'undefined') {
+        return;
+    }
+    var blocks = block.split(',');
+    while(typeof(blocks[0]) !== 'undefined') {
         var sku = blocks.shift();
         var name = blocks.shift();
         var price = blocks.shift();
         var marked = blocks.shift();
-        if(sku === undefined || name === undefined || price === undefined || marked === undefined) {
+        if(typeof(sku) === 'undefined' || typeof(name) === 'undefined' || typeof(price) === 'undefined' || typeof(marked) === 'undefined') {
             break;
         }
         const item = new product(sku, name, price, marked);
@@ -29,9 +50,9 @@ function makeShelf(blocks, shelfArr) {
 function TitleCase(string) {
     var words = string.split(" ");
     var title = "";
-    while(words[0] !== undefined) {
+    while(typeof(words[0]) !== 'undefined') {
         if(words[0] === "TJ" || words[0] === "IPA" || words[0] == "TJS") {
-            title += words[0];
+            title += words[0] + ' ';
             words.shift();
             continue;
         }
