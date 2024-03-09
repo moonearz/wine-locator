@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', ()=> {
-    fetch('../data/wine_shelves.csv')
+    fetch('../data/shelves.csv')
         .then((res) => res.text())
         .then((text) => {
             readWineShelves(text);
         })
         .catch((e) => console.error(e));
-    //shelves are clickable
-    var shelves = document.getElementsByClassName('shelf');
+    var shelves = document.getElementsByClassName('wineshelf');
 
     function isNumeric(input) {
         return (input - 0) == input && (''+input).trim().length > 0;
@@ -34,4 +33,4 @@ document.addEventListener('DOMContentLoaded', ()=> {
             }
         }
     }
-})
+});

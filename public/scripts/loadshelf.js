@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
     var index = getIndex();
     bigShelf = document.getElementById("bigshelf");
     bigShelf.innerHTML = "";
-    fetch('../data/wine_shelves.csv')
+    fetch('../data/shelves.csv')
         .then((res) => res.text())
         .then((text) => {
             var blocks = text.split(/[\r\n]+/);
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
                 blocks.shift();
             }
             makeShelf(blocks[0], shelfArr);
-            bigShelf.innerHTML = shelfHTML(shelfArr, "wine");
+            bigShelf.innerHTML = shelfHTML(shelfArr, index);
         })
         .catch((e) => console.error(e));
 });
@@ -63,7 +63,7 @@ function TitleCase(string) {
     return title;
 }
 
-function shelfHTML(shelfArr, aisle) {
+function shelfHTML(shelfArr, shelfNum) {
     console.log(shelfArr);
     newText = ""
     for(index in shelfArr) {
@@ -73,7 +73,7 @@ function shelfHTML(shelfArr, aisle) {
         else {
             newText += '<div class = "product">';
         }
-        if(aisle === "wine") {
+        if(shelfNum < 55) {
             newText += '<div class = "bottle"> </div>';
         }
         else {
@@ -90,11 +90,11 @@ function shelfHTML(shelfArr, aisle) {
     if(newText === "") {
         newText = '<h2> This shelf is empty </h2>';
     }
-    newText += '<form action="/beer" class = "addbutton">' + "Add an item to this shelf <br><br><br>";
-    newText += '<label for = "sku"> SKU or Product Name: </label><br>';
+    newText += '<form action="/beer" class = "addbutton">' + "Add an item to this shelf <br><br>";
+    newText += '<label for = "sku"> SKU or Product Name: </label>';
     newText += '<input type = "text" id = "sku" name = "sku" required><br>';
-    newText += '<label for = "index"> Index (nth from the left): </label><br>';
-    newText += '<input type = "text" id = "index" name = "index" required><br><br><br>';
+    newText += '<label for = "index"> Index (nth from the left): </label>';
+    newText += '<input type = "text" id = "index" name = "index" required><br>';
     newText += '<input type = "submit">';
     newText += '</form>';
     return newText;

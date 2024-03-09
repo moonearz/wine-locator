@@ -2,51 +2,51 @@ const express = require('express');
 const fs = require('fs');
 
 const app = express();
-
-//data structures
-var productMap = new Map;
-var nameMap = new Map;
-var nameArr = [];
-fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
-    var lines = data.split(",,\r\n");
-    lines.shift();
-    while(typeof lines[0] !== 'undefined') {
-        var line = lines.shift();
-        var split = line.split(',');
-        nameArr.push(split[1]);
-        nameMap.set(split[1], split[0]);
-        productMap.set(split[0], split.splice(1));
-    }
-    
-    for(var [key, value] of nameMap) {
-        //console.log(key + " -> " + value);
-    }
-   //console.log(nameMap.size);
-});
-
-//current shelves
-var wineShelves = [];
-var beerShelves = [];
-var wineText;
-fs.readFile('public/data/wine_shelves.csv', 'utf-8', (err, data) => {
-    if(err) console.log(err);
-    wineShelves = readWine(data);
-    var writeText = writeWine(wineShelves);
-    fs.writeFile('public/data/test2.csv', writeText, (err) => {
-        if(err) {
-            console.log(err);
-        }
-    });     
-});
-
-
-
 app.set('view engine', 'ejs');
 
 app.listen(3000);
 
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
+app.use((req, res, next) => {
+    //data structures
+    var productMap = new Map;
+    var nameMap = new Map;
+    var nameArr = [];
+    fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
+        var lines = data.split(",,\r\n");
+        lines.shift();
+        while(typeof lines[0] !== 'undefined') {
+            var line = lines.shift();
+            var split = line.split(',');
+            var newPro = new product(split[0], split[1], split[2], '0');
+            nameArr.push(split[1]);
+            nameMap.set(split[1], newPro);
+            productMap.set(split[0], newPro);
+        }
+        
+        for(var [key, value] of nameMap) {
+            //console.log(key + " -> " + value.price);
+        }
+    //console.log(nameMap.size);
+    });
+    //current shelves
+    var Shelves = [];
+    fs.readFile('public/data/shelves.csv', 'utf-8', (err, data) => {
+        if(err) {
+            console.log(err);
+        }
+        Shelves = readShelves(data);
+        var writeText = writeShelves(Shelves);
+        //console.log(writeText);
+        fs.writeFile('public/data/test2.csv', writeText, (err) => {
+            if(err) {
+                console.log(err);
+            }
+        });     
+    });
+    next();
+});
 
 app.post('/home', (req, res) => {
     var searchValue = req.body.SKU;
@@ -57,29 +57,13 @@ app.post('/home', (req, res) => {
     else {
         nameValue = req.body.pname.toUpperCase();
     }
-    if(typeof(searchValue) !== 'undefined') {
-        if(skuMap.has(searchValue)) {
-            unmarkAll('public/data/current_wine.csv', wineText);
-            mark('public/data/current_wine.csv', wineText, searchValue);
-            res.render('wines', {title: 'Wines'});
-        }
-        else {
-            //should inform the user that item was not found
-            res.render('index', {title: 'Home'});
-        }
+    if(typeof(searchValue) === 'undefined') {
+        //make list of candidates
+        var candidates = [];
+        writeList(candidates);
     }
-    else {
-        if(typeof (nameValue) !== 'undefined') {
-            var candidates = [];
-            for(index in nameArr) {
-                if(nameArr[index].includes(nameValue)) {
-                    candidates.push(nameArr[index]);
-                }
-            }
-            //console.log(candidates);
-        }
-        res.render('index', {title: 'Home'});
-    }
+    res.render('wines', {title: 'Wines'});
+    res.render('index', {title: 'Home'});
 });
 
 app.post('/shelf', (req, res) => {
@@ -100,7 +84,6 @@ app.get('/index', (req, res) => {
 });
 
 app.get('/wines', (req, res) => {
-    //unmarkAll('public/data/current_wine.csv', wineText);
     res.render('wines', {title: 'Wines'});
 });
 
@@ -142,72 +125,46 @@ function skusearch(input, wineText, map) {
     }
 }
 
-function mark(document, text, sku) {
-    var outText = "";
-    lines = text.split(/[\r\n]+/);
-    while(typeof lines[0] !== 'undefined') {
-        if(lines[0].slice(0,5) === sku) {
-            lines[0] = lines[0].slice(0, -1) + '1';
-        }
-        outText += lines.shift() + "\n";
-    }
-    fs.writeFile(document, outText, (err) => {
-        if(err) console.error(err);
-    });
-}
-
-function unmarkAll(document, text) {
-    var outText = "";
-    var lines = text.split(/[\r\n]+/);
-    outText += lines.shift() + "\n";
-    while(typeof lines[0] !== 'undefined') {
-        lines[0] = lines[0].slice(0, -1) + '0';
-        var line = lines.shift() + "\n";
-        outText += line;
-    }
-    fs.writeFile(document, outText, (err) => {
-        if(err) console.error(err);
-    });
-}
-
-function writeWine(wineShelves) {
+function writeShelves(Shelves) {
     var text = "";
-    for(index1 in wineShelves) {
+    for(var index1 = 0; index1 < 84; index1++) {
         text += index1;
-        if(wineShelves[index1].length > 0) {
+        if(Shelves[index1].length > 0) {
             text += ',';
         }
-        for(index2 in wineShelves[index1]) {
-            text += wineShelves[index1][index2].sku + ',';
-            text += wineShelves[index1][index2].name + ',';
-            text += wineShelves[index1][index2].price + ',';
-            if(wineShelves[index1][index2].marked) {
+        for(var index2 in Shelves[index1]) {
+            text += Shelves[index1][index2].sku + ',';
+            text += Shelves[index1][index2].name + ',';
+            text += Shelves[index1][index2].price + ',';
+            if(Shelves[index1][index2].marked) {
                 text += '1';
             }
             else {
                 text += '0';
             }
-            if(index2 + 1 !== wineShelves[index1].length) {
+            if(parseInt(index2) !== (Shelves[index1].length - 1)) {
                 text += ',';
             }
         }
-        if(index1 + 1 < wineShelves.length) {
+        if(index1 + 1 < Shelves.length) {
             text += '\n';
         }
     }
     return text;
 }
 
-function readWine(wineText) {
+function readShelves(shelfText) {
     var output = [];
-    var shelves = wineText.split('\n');
-    for(var i = 0; i < 55; i++) {
+    var shelves = shelfText.split('\n');
+    for(var i = 0; i < 84; i++) {
         if(typeof shelves[0] === 'undefined') {
+            shelves.shift();
             output.push([]);
             continue;
         }
         var nextShelf = [];
         nextLine = shelves[0].split(',');
+        nextLine.shift();
         while(typeof(nextLine[0]) !== 'undefined') {
             var sku = nextLine.shift();
             var name = nextLine.shift();
@@ -224,6 +181,10 @@ function readWine(wineText) {
         shelves.shift();
     }
     return output;
+}
+
+function writeList(candidates) {
+    outText = "";
 }
 
 class product {
