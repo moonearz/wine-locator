@@ -79,48 +79,45 @@ h1, h3, h4 {
 /* SHELF STYLES */
 .bigshelf {
     display: flex;
-    border: 2px solid black;
-    height: 440px;
-    width: 1370px;
-    margin-left: 70px;
+    border: 3px solid black;
+    width: 1476px;
+    height: 280px;
 }
 
 .bottle {
-    height: 360px;
-    width: 306px;
+    height: 180px;
+    width: 153px;
     background-image: url('images/bottle.jpg');
     padding-bottom: 15px;
 }
 
 .can {
-    height: 314px;
-    width: 306px;
+    height: 150px;
+    width: 153px;
     background-image: url('images/can.jpg');
     padding-bottom: 15px;
 }
 
 .tag {
-    border: 3px  solid black;
+    border-top: 3px solid black;
+    font-size: 12px;
     display: flex;
     text-align: center;
     height: 113px;
-    width: 306px;
+    width: 153px;
     background-image: url('images/sign.png');
     padding-right: 30px;
 }
 
-.name {
-    padding-left: 15px;
-}
-
 .price {
-    height: 100px;
-    width: 100px;
+    height: 75px;
+    width: 75px;
     border-radius: 50%;
     border: 3px solid black;
     background-color: white;
     text-align: center;
-    margin-left: 30px;
+    margin-top: 5px;
+    margin-left: 25px;
 }
 .product {
     border: 1px solid black;
