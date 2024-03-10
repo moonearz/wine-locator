@@ -85,6 +85,13 @@ app.post('/home', (req, res) => {
                 });  
             }
             else {
+                unmark(Shelves);
+                var writeText = writeShelves(Shelves); 
+                fs.writeFile('public/data/shelves.csv', writeText, (err) => {   
+                if(err) {
+                    console.log(err);
+                }
+                }); 
                 console.log("dont have this one")
             }   
         });
