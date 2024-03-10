@@ -8,7 +8,9 @@ app.listen(3000);
 
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
+/*anything behind the scenes here*/
 app.use((req, res, next) => {
+    /* TESTING FILE WRITING
     //data structures
     var productMap = new Map;
     var nameMap = new Map;
@@ -37,14 +39,16 @@ app.use((req, res, next) => {
             console.log(err);
         }
         Shelves = readShelves(data);
+        mark(Shelves, 20, 0);
         var writeText = writeShelves(Shelves);
         //console.log(writeText);
-        fs.writeFile('public/data/test2.csv', writeText, (err) => {
+        fs.writeFile('public/data/shelves.csv', writeText, (err) => {
             if(err) {
                 console.log(err);
             }
         });     
     });
+    */
     next();
 });
 
@@ -62,12 +66,82 @@ app.post('/home', (req, res) => {
         var candidates = [];
         writeList(candidates);
     }
+    else {
+        var Shelves = [];
+        var shelfMap = new Map;
+        fs.readFile('public/data/shelves.csv', 'utf-8', (err, data) => {
+            if(err) {
+                console.log(err);
+            }
+            Shelves = readShelves(data, shelfMap);
+            if(shelfMap.has(searchValue)) {
+                unmark(Shelves);
+                mark(Shelves, shelfMap.get(searchValue)[0], shelfMap.get(searchValue)[1]);
+                var writeText = writeShelves(Shelves); 
+                fs.writeFile('public/data/shelves.csv', writeText, (err) => {   
+                if(err) {
+                    console.log(err);
+                }
+                });  
+            }
+            else {
+                console.log("dont have this one")
+            }   
+        });
+    }
     res.render('wines', {title: 'Wines'});
-    res.render('index', {title: 'Home'});
+});
+
+app.post('/wine', (req, res) => {
+    var shelfNum = req.body.num;
+    res.render('shelf', {title: 'Shelf ' + shelfNum});
+});
+
+app.post('/beer', (req, res) => {
+    var shelfNum = req.body.num;
+    res.render('shelf', {title: 'Shelf ' + shelfNum});
 });
 
 app.post('/shelf', (req, res) => {
-    var shelfNum = req.body.num;
+    var sku = req.body.sku;
+    var shelfNum = req.body.shelfNum;
+    var index = req.body.index;
+    //data structures
+    var productMap = new Map;
+    var nameMap = new Map;
+    var nameArr = [];
+    fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
+        var lines = data.split(",,\r\n");
+        lines.shift();
+        while(typeof lines[0] !== 'undefined') {
+            var line = lines.shift();
+            var split = line.split(',');
+            var newPro = new product(split[0], split[1], split[2], '0');
+            nameArr.push(split[1]);
+            nameMap.set(split[1], newPro);
+            productMap.set(split[0], newPro);
+        }
+    });
+    var Shelves = [];
+    var shelfMap = new Map;
+    fs.readFile('public/data/shelves.csv', 'utf-8', (err, data) => {
+        if(err) {
+            console.log(err);
+        }
+        Shelves = readShelves(data, shelfMap);
+        if(shelfMap.has(sku) || (parseInt(index) > Shelves[shelfNum].length) || parseInt(index) < 0) {
+            console.log("already have this one");
+        }
+        else {
+            addItem(productMap, sku, Shelves, shelfNum, index);
+            var writeText = writeShelves(Shelves); 
+            fs.writeFile('public/data/shelves.csv', writeText, (err) => {
+            if(err) {
+                console.log(err);
+            }
+        });  
+        }   
+    });
     res.render('shelf', {title: 'Shelf ' + shelfNum});
 });
 
@@ -107,22 +181,14 @@ app.use((req, res) => {
 
 
 //functions
-function skusearch(input, wineText, map) {
-    if(map.has(input)) {
-        if(map.get(input)[1] === "wine") {
-            //mark(wineText, input, 'data/test.csv');
-            window.open("wines");
-        }
-        else if(map.get(input)[1] === "beer") {
-            window.open("beers");
-        }
-        else {
-            alert("aisle not found!");
-        }
-    }
-    else {
-        alert("input not found!");
-    }
+function skusearch(map, input) {
+    /*      
+    structure:
+    1. make hash table of items on shelves
+    2. check if sku is in table
+    3. record shelf and index of each item for easy marking
+    4. mark if item is found
+    */
 }
 
 function writeShelves(Shelves) {
@@ -153,7 +219,9 @@ function writeShelves(Shelves) {
     return text;
 }
 
-function readShelves(shelfText) {
+function readShelves(shelfText, shelfMap) {
+    var shelfNum = 0;
+    var index = 0;
     var output = [];
     var shelves = shelfText.split('\n');
     for(var i = 0; i < 84; i++) {
@@ -176,11 +244,44 @@ function readShelves(shelfText) {
             }
             nextItem = new product(sku, name, price, marked);
             nextShelf.push(nextItem);
+            shelfMap.set(sku, [shelfNum, index]);
+            index++;
         }
+        index = 0;
         output.push(nextShelf);
         shelves.shift();
+        shelfNum++;
     }
     return output;
+}
+
+function unmark(Shelves) {
+    for(index1 in Shelves) {
+        for(index2 in Shelves[index1]) {
+            Shelves[index1][index2].marked = false;
+        }
+    }
+}
+
+function mark(Shelves, index1, index2) {
+    if(Shelves[index1].length < (index2 + 1)) {
+        return;
+    }
+    else {
+        Shelves[index1][index2].marked = true;
+    }
+}
+
+function addItem(products, sku, Shelves, shelfNum, index) {
+    Shelves[shelfNum].splice(index, 0, products.get(sku));
+}
+
+function deleteItem(Shelves, shelfNum, index) {
+    Shelves[shelfNum].splice(index, 1);
+}
+
+function removeItem(Shelves, shelfNum, index) {
+
 }
 
 function writeList(candidates) {
