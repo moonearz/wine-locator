@@ -98,9 +98,11 @@ function shelfHTML(shelfArr, shelfNum) {
     if(newText === "") {
         newText = '<h2> This shelf is empty </h2>';
     }
-    newText += '<form action="/shelf" class = "addbutton" method = "post">' + "Add an item to this shelf <br><br>";
-    newText += '<label for = "skud"> SKU or Product Name: </label>';
-    newText += '<input type = "text" id = "skud" name = "sku" required><br>';
+    newText += '<form action="/shelf" class = "addbutton" method = "post">' + "Add an item to this shelf, index required <br><br>";
+    newText += '<label for = "skud"> SKU: </label>';
+    newText += '<input type = "text" id = "skud" name = "sku"><br>';
+    newText += '<label for = "pnamed"> or Product Name: </label>';
+    newText += '<input type = "text" id = "pnamed" name = "pname"><br>';
     newText += '<label for = "indexd"> Index (nth from the left): </label>';
     newText += '<input type = "text" id = "indexd" name = "index" required><br>';
     newText += '<input type = "submit">';
