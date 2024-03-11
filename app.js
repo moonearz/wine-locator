@@ -38,15 +38,38 @@ app.post('/shelf', (req, res) => {
     var shelfNum = req.body.shelfNum;
     var index = parseInt(req.body.index) - 1;
     var flag = req.body.flag;
+    var pname;
+    if(typeof(req.body.pname) === 'undefined') {
+        pname = "";
+    }
+    else {
+        pname = req.body.pname.toUpperCase();
+    }
     if(flag === "add") {
-        console.log("there");
         if(shelfMap.has(sku) || index > Shelves[shelfNum].length || index < 0) {
             console.log("cant do this one");
+            console.log(sku);
+            console.log(index);
         }
         else {
-            addItem(productMap, sku, Shelves, shelfNum, index);
-            var writeText = writeShelves(Shelves); 
-            fs.writeFileSync('public/data/shelves.csv', writeText);  
+            if(productMap.has(sku) && !shelfMap.has(sku)) {
+                addItem(productMap, sku, Shelves, shelfNum, index);
+                var writeText = writeShelves(Shelves); 
+                fs.writeFileSync('public/data/shelves.csv', writeText);  
+            }
+            else if(shelfMap.has(sku)) {
+                console.log("Error: sku already on shelves");
+            }
+            else {
+                //make list of candidates
+                var candidates = [];
+                writeList(pname, candidates, nameArr, nameMap);
+                //phony product with shelf information
+                shelfInfo = new product(shelfNum, index, '0', '0');
+                candidates.push(shelfInfo);
+                fs.writeFileSync('public/data/results.csv', writeResults(candidates));
+                return res.render('add', {title: 'Results'});
+            }  
         } 
     }
     else if (flag === "delete") { 
