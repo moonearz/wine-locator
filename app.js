@@ -206,7 +206,7 @@ app.post('/home', (req, res, next) => {
         else {
             unmark(Shelves);
             console.log("dont have this one")
-            return res.render('home', {title: 'Home'})
+            return res.render('index', {title: 'Home'});
         }   
         var writeText = writeShelves(Shelves); 
         fs.writeFileSync('public/data/shelves.csv', writeText);
