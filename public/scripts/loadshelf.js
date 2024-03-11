@@ -96,6 +96,7 @@ function shelfHTML(shelfArr, shelfNum) {
     newText += '<label for = "index"> Index (nth from the left): </label>';
     newText += '<input type = "text" id = "index" name = "index" required><br>';
     newText += '<input type = "submit">';
+    newText += '<input type = "hidden" id = "flag" name = "flag" value = "add">';
     newText += '<input type = "hidden" id = "shelfNum" name = shelfNum value =' + shelfNum + '>';
     newText += '</form>';
     return newText;
