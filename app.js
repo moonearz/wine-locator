@@ -46,13 +46,14 @@ app.post('/shelf', (req, res) => {
         pname = req.body.pname.toUpperCase();
     }
     if(flag === "add") {
-        if(shelfMap.has(sku) || index > Shelves[shelfNum].length || index < 0) {
+        var permission = (!shelfMap.has(sku) || sku === '00000')
+        if(!permission || index > Shelves[shelfNum].length || index < 0) {
             console.log("cant do this one");
             console.log(sku);
             console.log(index);
         }
         else {
-            if(productMap.has(sku) && !shelfMap.has(sku)) {
+            if(productMap.has(sku) && permission) {
                 addItem(productMap, sku, Shelves, shelfNum, index);
                 var writeText = writeShelves(Shelves); 
                 fs.writeFileSync('public/data/shelves.csv', writeText);  

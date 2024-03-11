@@ -19,7 +19,6 @@ function readResults(text) {
     var shelfNum = lastLine[0];
     var index = parseInt(lastLine[1]) + 1;
     lines.pop();
-    console.log(shelfNum + ' ' + index);
     while(typeof(lines[0]) !== 'undefined') {
         split = lines[0].split(',');
         if(typeof(split[1]) === 'undefined') {

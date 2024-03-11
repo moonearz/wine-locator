@@ -9,12 +9,12 @@ h1, h3, h4 {
 
 .button1 {
     border-radius: 8px;
-    background-color: lightcoral;
+    background-color: lightblue;
 }
 
 .button2 {
     border-radius: 8px;
-    background-color: lightblue;
+    background-color: lightgreen;
 }
 
 /* GRID STYLES */
@@ -40,7 +40,7 @@ h1, h3, h4 {
     text-align: center;
     align-self: center;
     height: 100px;
-    width: 140px;
+    width: 135px;
 }
 
 .beershelf {
@@ -75,7 +75,7 @@ h1, h3, h4 {
     display: flex;
     border: 3px solid black;
     width: 1476px;
-    height: 280px;
+    height: 320px;
 }
 
 .bottle {
@@ -99,7 +99,7 @@ h1, h3, h4 {
     font-size: 12px;
     display: flex;
     text-align: center;
-    height: 113px;
+    height: 150px;
     width: 153px;
     background-image: url('images/sign.png');
     padding-right: 30px;
