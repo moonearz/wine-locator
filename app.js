@@ -10,28 +10,18 @@ app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 /*anything behind the scenes here*/
 app.use((req, res, next) => {
-    /* TESTING FILE WRITING
+    /*
     //data structures
     var productMap = new Map;
     var nameMap = new Map;
     var nameArr = [];
-    fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
-        var lines = data.split(",,\r\n");
-        lines.shift();
-        while(typeof lines[0] !== 'undefined') {
-            var line = lines.shift();
-            var split = line.split(',');
-            var newPro = new product(split[0], split[1], split[2], '0');
-            nameArr.push(split[1]);
-            nameMap.set(split[1], newPro);
-            productMap.set(split[0], newPro);
-        }
-        
-        for(var [key, value] of nameMap) {
-            //console.log(key + " -> " + value.price);
-        }
-    //console.log(nameMap.size);
-    });
+    readProducts(nameArr, nameMap, productMap);
+    console.log(nameArr);
+    for(var [key, value] of nameMap) {
+        console.log(key + " -> " + value.price);
+    }
+    */
+    /* TESTING
     //current shelves
     var Shelves = [];
     fs.readFile('public/data/shelves.csv', 'utf-8', (err, data) => {
@@ -50,53 +40,6 @@ app.use((req, res, next) => {
     });
     */
     next();
-});
-
-app.post('/home', (req, res) => {
-    var searchValue = req.body.SKU;
-    var nameValue;
-    if(typeof(req.body.pname) === 'undefined') {
-        nameValue = req.body.pname;
-    }
-    else {
-        nameValue = req.body.pname.toUpperCase();
-    }
-    if(typeof(searchValue) === 'undefined') {
-        //make list of candidates
-        var candidates = [];
-        writeList(candidates);
-    }
-    else {
-        var Shelves = [];
-        var shelfMap = new Map;
-        fs.readFile('public/data/shelves.csv', 'utf-8', (err, data) => {
-            if(err) {
-                console.log(err);
-            }
-            Shelves = readShelves(data, shelfMap);
-            if(shelfMap.has(searchValue)) {
-                unmark(Shelves);
-                mark(Shelves, shelfMap.get(searchValue)[0], shelfMap.get(searchValue)[1]);
-                var writeText = writeShelves(Shelves); 
-                fs.writeFile('public/data/shelves.csv', writeText, (err) => {   
-                if(err) {
-                    console.log(err);
-                }
-                });  
-            }
-            else {
-                unmark(Shelves);
-                var writeText = writeShelves(Shelves); 
-                fs.writeFile('public/data/shelves.csv', writeText, (err) => {   
-                if(err) {
-                    console.log(err);
-                }
-                }); 
-                console.log("dont have this one")
-            }   
-        });
-    }
-    res.render('wines', {title: 'Wines'});
 });
 
 app.post('/wine', (req, res) => {
@@ -179,6 +122,63 @@ app.get('/shelf', (req, res) => {
 app.get('/help', (req, res) => {
     res.render('help', {title: 'Help'});
 });
+app.post('/home', (req, res, next) => {
+    var searchValue = req.body.SKU;
+    var nameValue;
+    var test = "test";
+    if(typeof(req.body.pname) === 'undefined') {
+        nameValue = req.body.pname;
+    }
+    else {
+        nameValue = req.body.pname.toUpperCase();
+    }
+    if(typeof(searchValue) === 'undefined') {
+        if(typeof(nameValue) === 'undefined' || nameValue.trim() === "") {
+            return res.render('index', {title: 'Home'});
+        }
+        //make list of candidates
+        var candidates = [];
+        writeList(candidates);
+    }
+    else {
+        var Shelves = [];
+        var shelfMap = new Map;
+        fs.readFile('public/data/shelves.csv', 'utf-8', async (err, data) => {
+            if(err) {
+                console.log(err);
+            }
+            Shelves = readShelves(data, shelfMap);
+            if(shelfMap.has(searchValue)) {
+                if(shelfMap.get(searchValue)[0] > 54) {
+                } 
+                unmark(Shelves);
+                mark(Shelves, shelfMap.get(searchValue)[0], shelfMap.get(searchValue)[1]);
+                var writeText = writeShelves(Shelves); 
+                fs.writeFile('public/data/shelves.csv', writeText, (err) => {   
+                if(err) {
+                    console.log(err);
+                }
+                });  
+            }
+            else {
+                unmark(Shelves);
+                var writeText = writeShelves(Shelves); 
+                fs.writeFile('public/data/shelves.csv', writeText, (err) => {   
+                if(err) {
+                    console.log(err);
+                }
+                }); 
+                console.log("dont have this one")
+            }   
+        });
+    }
+    if(test === "beer") {
+        return res.render('beers', {title: "Beers"});
+    }
+    else {
+        return res.render('wines', {title: 'Wines'});
+    }
+});
 
 app.use((req, res) => {
     res.status(404).render('404', {title: '404'});
@@ -260,6 +260,26 @@ function readShelves(shelfText, shelfMap) {
         shelfNum++;
     }
     return output;
+}
+
+async function readProducts(nameArr, nameMap, productMap) {
+    await fs.readFile('public/data/products.csv', 'utf-8', function(err, data) {
+        if(err) {
+            console.log(err);
+        }
+        else {
+            var lines = data.split(",,\r\n");
+            lines.shift();
+            while(typeof lines[0] !== 'undefined') {
+                var line = lines.shift();
+                var split = line.split(',');
+                var newPro = new product(split[0], split[1], split[2], '0');
+                nameArr.push(split[1]);
+                nameMap.set(split[1], newPro);
+                productMap.set(split[0], newPro);
+            }
+        }
+    });
 }
 
 function unmark(Shelves) {
