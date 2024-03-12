@@ -58,9 +58,6 @@ app.post('/shelf', (req, res) => {
                 var writeText = writeShelves(Shelves); 
                 fs.writeFileSync('public/data/shelves.csv', writeText);  
             }
-            else if(shelfMap.has(sku)) {
-                console.log("Error: sku already on shelves");
-            }
             else {
                 //make list of candidates
                 var candidates = [];
