@@ -75,7 +75,7 @@ function shelfHTML(shelfArr, shelfNum) {
         newText += '<input type = "hidden" id = "index" name = index value =' + (counter + 1) + '>';
         newText += '<input type = "hidden" id = "shelfNum" name = shelfNum value =' + shelfNum + '>';
         newText += '</form>';
-        if(shelfNum < 55) {
+        if(shelfNum < 55 || shelfNum > 69) {
             newText += '<div class = "bottle"> </div>';
         }
         else {
