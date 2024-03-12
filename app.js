@@ -243,7 +243,7 @@ function loadData(nameMap, nameArr, productMap, shelfMap, Shelves) {
 
 function writeShelves(Shelves) {
     var text = "";
-    for(var index1 = 0; index1 < 84; index1++) {
+    for(var index1 = 0; index1 < 85; index1++) {
         text += index1;
         if(Shelves[index1].length > 0) {
             text += ',';
@@ -274,7 +274,7 @@ function readShelves(shelfText, shelfMap) {
     var index = 0;
     var output = [];
     var shelves = shelfText.split('\n');
-    for(var i = 0; i < 84; i++) {
+    for(var i = 0; i < 85; i++) {
         if(typeof shelves[0] === 'undefined') {
             shelves.shift();
             output.push([]);
