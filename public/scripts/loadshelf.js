@@ -68,12 +68,7 @@ function shelfHTML(shelfArr, shelfNum) {
     newText = ""
     var counter = 0;
     for(index in shelfArr) {
-        if(shelfArr[index].marked) {
-            newText += '<div class = "marked product">';
-        }
-        else {
-            newText += '<div class = "product">';
-        }
+        newText += '<div class = "product">';
         newText += '<form action="/shelf" method = "post" class = "deleteform">';
         newText += '<input type = "submit" class = "deletebutton" value = "X">';
         newText += '<input type = "hidden" id = "flag" name = "flag" value = "delete">';
@@ -87,8 +82,13 @@ function shelfHTML(shelfArr, shelfNum) {
             newText += '<div class = "can"> </div>';
         }
         newText += '<div class = "tag">';
-        newText += '<p class = "name">' + TitleCase(shelfArr[index].name) + '</p>';
-        newText += '<div class = "price">';
+        newText += '<div class = "name">' + TitleCase(shelfArr[index].name) + '</div>';
+        if(shelfArr[index].marked) {
+            newText += '<div class = "marked price">';
+        }
+        else {
+            newText += '<div class = "price">';
+        }
         newText += '<p>' + shelfArr[index].price.toLowerCase() + '</p>';
         newText += '</div>';
         newText += '</div>';
@@ -98,13 +98,13 @@ function shelfHTML(shelfArr, shelfNum) {
     if(newText === "") {
         newText = '<h2> This shelf is empty </h2>';
     }
-    newText += '<form action="/shelf" class = "addbutton" method = "post">' + "Add an item to this shelf, index required <br><br>";
+    newText += '<form action="/shelf" class = "addbutton" method = "post">' + "<div class = 'miniheader'>Add an item to this shelf, index required</div> <br><br>";
     newText += '<label for = "skud"> SKU: </label>';
     newText += '<input type = "text" id = "skud" name = "sku"><br>';
-    newText += '<label for = "pnamed"> or Product Name: </label>';
+    newText += '<label for = "pnamed"> Product Name: </label>';
     newText += '<input type = "text" id = "pnamed" name = "pname"><br>';
     newText += '<label for = "indexd"> Index (nth from the left): </label>';
-    newText += '<input type = "text" id = "indexd" name = "index" required><br>';
+    newText += '<input type = "text" id = "indexd" name = "index" required><br><br>';
     newText += '<input type = "submit">';
     newText += '<input type = "hidden" id = "flag" name = "flag" value = "add">';
     newText += '<input type = "hidden" id = "shelfNum" name = shelfNum value =' + shelfNum + '>';
