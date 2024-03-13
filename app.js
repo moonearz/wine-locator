@@ -48,9 +48,12 @@ app.post('/shelf', (req, res) => {
     if(flag === "add") {
         var permission = (!shelfMap.has(sku) || sku === '00000')
         if(!permission || index > Shelves[shelfNum].length || index < 0) {
-            console.log("cant do this one");
-            console.log(sku);
-            console.log(index);
+            if(shelfMap.has(sku)) {
+                console.log("shelves already contain sku");
+            }
+            else {
+                console.log("invalid index");
+            }
         }
         else {
             if(productMap.has(sku) && permission) {
@@ -59,7 +62,20 @@ app.post('/shelf', (req, res) => {
                 fs.writeFileSync('public/data/shelves.csv', writeText);  
             }
             else {
+                if(sku !== '') {
+                    if(productMap.has(sku)) {
+                        console.log("sku already on shelves");
+                    }
+                    else {
+                        console.log("sku not found");
+                    }
+                    return res.render('shelf', {title: 'Shelf ' + shelfNum});
+                }
                 //make list of candidates
+                if(pname === '' || pname === ' ') {
+                    console.log("empty search");
+                    return res.render('shelf', {title: 'Shelf ' + shelfNum});
+                }
                 var candidates = [];
                 writeList(pname, candidates, nameArr, nameMap);
                 //phony product with shelf information
@@ -76,6 +92,60 @@ app.post('/shelf', (req, res) => {
         fs.writeFileSync('public/data/shelves.csv', writeText); 
     }
     res.render('shelf', {title: 'Shelf ' + shelfNum});
+});
+
+app.post('/home', (req, res, next) => {
+    //data structures
+    var productMap = new Map;
+    var nameMap = new Map;
+    var nameArr = [];
+    //current shelves
+    var Shelves = [];
+    var shelfMap = new Map;
+    var structures = loadData(nameMap, nameArr, productMap, shelfMap, Shelves);
+    nameMap = structures[0];
+    nameArr = structures[1];
+    productMap = structures[2];
+    shelfMap = structures[3];
+    Shelves = structures[4];
+
+    var searchValue = req.body.SKU;
+    var nameValue;
+    if(typeof(req.body.pname) === 'undefined') {
+        nameValue = req.body.pname;
+    }
+    else {
+        nameValue = req.body.pname.toUpperCase();
+    }
+    if(typeof(searchValue) === 'undefined') {
+        if(typeof(nameValue) === 'undefined' || nameValue.trim() === "") {
+            return res.render('index', {title: 'Home'});
+        }
+        //make list of candidates
+        var candidates = [];
+        writeList(nameValue, candidates, nameArr, nameMap);
+        fs.writeFileSync('public/data/results.csv', writeResults(candidates));
+        return res.render('mark', {title: 'Results'});
+    }
+    else {
+        if(shelfMap.has(searchValue)) {
+            unmark(Shelves);
+            mark(Shelves, shelfMap.get(searchValue)[0], shelfMap.get(searchValue)[1]);
+        }
+        else {
+            unmark(Shelves);
+            console.log("sku not in database")
+            return res.render('index', {title: 'Home'});
+        }   
+        var writeText = writeShelves(Shelves); 
+        fs.writeFileSync('public/data/shelves.csv', writeText);
+    }
+    if(shelfMap.get(searchValue)[0] > 54) {
+        return res.render('beers', {title: "Beers"});
+    }
+    else {
+        return res.render('wines', {title: 'Wines'});
+    }
 });
 
 app.get('/', (req, res) => {
@@ -160,60 +230,6 @@ app.get('/add', (req, res) => {
 
 app.get('/mark', (req, res) => {
     res.render('mark', {title: 'Results'});
-});
-
-app.post('/home', (req, res, next) => {
-    //data structures
-    var productMap = new Map;
-    var nameMap = new Map;
-    var nameArr = [];
-    //current shelves
-    var Shelves = [];
-    var shelfMap = new Map;
-    var structures = loadData(nameMap, nameArr, productMap, shelfMap, Shelves);
-    nameMap = structures[0];
-    nameArr = structures[1];
-    productMap = structures[2];
-    shelfMap = structures[3];
-    Shelves = structures[4];
-
-    var searchValue = req.body.SKU;
-    var nameValue;
-    if(typeof(req.body.pname) === 'undefined') {
-        nameValue = req.body.pname;
-    }
-    else {
-        nameValue = req.body.pname.toUpperCase();
-    }
-    if(typeof(searchValue) === 'undefined') {
-        if(typeof(nameValue) === 'undefined' || nameValue.trim() === "") {
-            return res.render('index', {title: 'Home'});
-        }
-        //make list of candidates
-        var candidates = [];
-        writeList(nameValue, candidates, nameArr, nameMap);
-        fs.writeFileSync('public/data/results.csv', writeResults(candidates));
-        return res.render('mark', {title: 'Results'});
-    }
-    else {
-        if(shelfMap.has(searchValue)) {
-            unmark(Shelves);
-            mark(Shelves, shelfMap.get(searchValue)[0], shelfMap.get(searchValue)[1]);
-        }
-        else {
-            unmark(Shelves);
-            console.log("dont have this one")
-            return res.render('index', {title: 'Home'});
-        }   
-        var writeText = writeShelves(Shelves); 
-        fs.writeFileSync('public/data/shelves.csv', writeText);
-    }
-    if(shelfMap.get(searchValue)[0] > 54) {
-        return res.render('beers', {title: "Beers"});
-    }
-    else {
-        return res.render('wines', {title: 'Wines'});
-    }
 });
 
 app.use((req, res) => {
