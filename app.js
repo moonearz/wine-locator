@@ -119,6 +119,7 @@ app.post('/home', (req, res, next) => {
     }
     if(typeof(searchValue) === 'undefined') {
         if(typeof(nameValue) === 'undefined' || nameValue.trim() === "") {
+            console.log("empty search")
             return res.render('index', {title: 'Home'});
         }
         //make list of candidates
@@ -134,7 +135,7 @@ app.post('/home', (req, res, next) => {
         }
         else {
             unmark(Shelves);
-            console.log("sku not in database")
+            console.log("sku not found on shelves");
             return res.render('index', {title: 'Home'});
         }   
         var writeText = writeShelves(Shelves); 
@@ -248,6 +249,7 @@ function loadData(nameMap, nameArr, productMap, shelfMap, Shelves) {
         nameArr.push(split[1]);
         nameMap.set(split[1], newPro);
         productMap.set(split[0], newPro);
+        //console.log("product(SKU: " + split[0] + ", name: " + split[1] + ", price: " + split[2] + ")")
     }
     data = fs.readFileSync('public/data/shelves.csv', 'utf-8')
     Shelves = readShelves(data, shelfMap);
@@ -306,10 +308,12 @@ function readShelves(shelfText, shelfMap) {
                 break;
             }
             nextItem = new product(sku, name, price, marked);
+            //console.log("product(SKU: " + sku + ", name: " + name + ", price: " + price + ")")
             nextShelf.push(nextItem);
             shelfMap.set(sku, [shelfNum, index]);
             index++;
         }
+        console.log()
         index = 0;
         output.push(nextShelf);
         shelves.shift();
