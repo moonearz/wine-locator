@@ -249,7 +249,7 @@ function loadData(nameMap, nameArr, productMap, shelfMap, Shelves) {
         nameArr.push(split[1]);
         nameMap.set(split[1], newPro);
         productMap.set(split[0], newPro);
-        console.log('product(SKU: "' + split[0] + '", name: "' + split[1] + '", price: "' + split[2] + '")')
+        console.log('product(SKU: "' + split[0] + '", name: "' + split[1] + '", price: "' + split[2] + '"),')
     }
     data = fs.readFileSync('public/data/shelves.csv', 'utf-8')
     Shelves = readShelves(data, shelfMap);
