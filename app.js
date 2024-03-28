@@ -289,6 +289,7 @@ function readShelves(shelfText, shelfMap) {
     var index = 0;
     var output = [];
     var shelves = shelfText.split('\n');
+    console.log("[")
     for(var i = 0; i < 85; i++) {
         if(typeof shelves[0] === 'undefined') {
             shelves.shift();
@@ -298,6 +299,7 @@ function readShelves(shelfText, shelfMap) {
         var nextShelf = [];
         nextLine = shelves[0].split(',');
         nextLine.shift();
+        console.log("[")
         while(typeof(nextLine[0]) !== 'undefined') {
             var sku = nextLine.shift();
             var name = nextLine.shift();
@@ -308,17 +310,23 @@ function readShelves(shelfText, shelfMap) {
                 break;
             }
             nextItem = new product(sku, name, price, marked);
-            //console.log("product(SKU: " + sku + ", name: " + name + ", price: " + price + ")")
+            console.log("product(SKU: " + sku + ", name: " + name + ", price: " + price + ")" + "," + (typeof(nextLine[0]) !== 'undefined'))
             nextShelf.push(nextItem);
             shelfMap.set(sku, [shelfNum, index]);
             index++;
         }
-        console.log()
+        if(i < 84) {
+            console.log("],")
+        }
+        else {
+            console.log("]")
+        }
         index = 0;
         output.push(nextShelf);
         shelves.shift();
         shelfNum++;
     }
+    console.log("]")
     return output;
 }
 
