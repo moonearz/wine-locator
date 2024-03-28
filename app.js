@@ -310,7 +310,7 @@ function readShelves(shelfText, shelfMap) {
                 break;
             }
             nextItem = new product(sku, name, price, marked);
-            console.log("product(SKU: " + sku + ", name: " + name + ", price: " + price + ")" + "," + (typeof(nextLine[0]) !== 'undefined'))
+            console.log('product(SKU: "' + sku + '", name: "' + name + '", price: "' + price + '")' + "," + (typeof(nextLine[0]) !== 'undefined'))
             nextShelf.push(nextItem);
             shelfMap.set(sku, [shelfNum, index]);
             index++;
